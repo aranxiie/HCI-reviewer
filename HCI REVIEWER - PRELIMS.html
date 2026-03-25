@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HCI ADVANCED REVIEWER</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@600;800&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --surface: #161616;
+            --border: #2d2d2d;
+            --primary: #e63946;
+            --primary-muted: #9b2226;
+            --text-high: #f1f1f1;
+            --text-med: #b0b0b0;
+            --text-low: #666666;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-high);
+            font-family: 'Inter', sans-serif;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image: 
+                radial-gradient(var(--primary-muted) 0.5px, transparent 0.5px);
+            background-size: 40px 40px;
+            background-attachment: fixed;
+        }
+
+        /* --- Header Section --- */
+        header {
+            width: 100%;
+            max-width: 1100px;
+            margin-bottom: 3rem;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-high);
+        }
+
+        .reviewer-meta {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--primary);
+            font-size: 0.9rem;
+            text-align: right;
+        }
+
+        /* --- Navigation --- */
+        nav {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-med);
+            padding: 0.8rem 1.2rem;
+            cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+        }
+
+        .tab-btn:hover { border-color: var(--primary); color: var(--text-high); }
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(230, 57, 70, 0.3);
+        }
+
+        /* --- Card Layout --- */
+        .content-area {
+            width: 100%;
+            max-width: 1100px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+            gap: 2rem;
+        }
+
+        .flashcard {
+            perspective: 1500px;
+            height: 500px;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .flashcard.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 4px;
+            padding: 2rem;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        /* --- Front Face --- */
+        .card-front {
+            background: var(--surface);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border-top: 5px solid var(--primary);
+        }
+
+        .card-front .tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            background: rgba(230, 57, 70, 0.1);
+            padding: 4px 8px;
+        }
+
+        .card-front h2 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.8rem;
+            color: var(--text-high);
+        }
+
+        .hint {
+            position: absolute;
+            bottom: 1.5rem;
+            font-size: 0.7rem;
+            color: var(--text-low);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* --- Back Face --- */
+        .card-back {
+            background: #000;
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            border-left: 5px solid var(--primary);
+        }
+
+        .scroll-content {
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .scroll-content::-webkit-scrollbar { width: 4px; }
+        .scroll-content::-webkit-scrollbar-thumb { background: var(--primary); }
+
+        .card-back h3 {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--primary);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .section-block { margin-bottom: 1.5rem; }
+        .block-title {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        ul { list-style: none; }
+        li {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 0.8rem;
+            color: var(--text-med);
+            padding-left: 1.2rem;
+            position: relative;
+        }
+
+        li::before {
+            content: "•";
+            color: var(--primary);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        strong { color: var(--text-high); font-weight: 600; }
+
+        .hidden { display: none; }
+
+        @media (max-width: 600px) {
+            .content-area { grid-template-columns: 1fr; }
+            .flashcard { height: 550px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>
+            <h1>HCI Exam Reviewer</h1>
+            <p style="color: var(--text-low); font-size: 0.8rem;">Interactive Notebook | Red & Black Edition</p>
+        </div>
+        <div class="reviewer-meta">
+            COLLEGE OF COMPUTING<br>MODULE 1.0 - 5.0
+        </div>
+    </header>
+
+    <nav>
+        <button class="tab-btn active" onclick="showTab('all')">View All</button>
+        <button class="tab-btn" onclick="showTab('i')">I. Intro</button>
+        <button class="tab-btn" onclick="showTab('ii')">II. History</button>
+        <button class="tab-btn" onclick="showTab('iii')">III. Principles</button>
+        <button class="tab-btn" onclick="showTab('iv')">IV. Design</button>
+        <button class="tab-btn" onclick="showTab('v')">V. Cognitive</button>
+    </nav>
+
+    <div class="content-area">
+
+        <!-- SECTION I -->
+        <div class="flashcard sect-i" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-face card-front">
+                    <span class="tag">MODULE I</span>
+                    <h2>Foundations of HCI</h2>
+                    <p class="hint">Click to expand details</p>
+                </div>
+                <div class="card-face card-back">
+                    <div class="scroll-content">
+                        <h3>I. Introduction to HCI</h3>
+                        <p style="font-size: 0.85rem; margin-bottom: 1rem;">Human-Computer Interaction (HCI) is a multidisciplinary field focusing on how people interact with computers and digital systems. It studies the design, evaluation, and implementation of interactive technologies.</p>
+                        
+                        <div class="section-block">
+                            <span class="block-title">Key Components:</span>
+                            <ul>
+                                <li><strong>The User:</strong> The individual or group involved in a task.</li>
+                                <li><strong>The Computer/System:</strong> The technology (software, hardware, mobile apps, etc.).</li>
+                                <li><strong>The Interaction:</strong> The process of the user performing tasks via the system.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flashcard sect-i" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-face card-front">
+                    <span class="tag">MODULE I</span>
+                    <h2>HCI Goals & Rationale</h2>
+                    <p class="hint">Click to expand details</p>
+                </div>
+                <div class="card-face card-back">
+                    <div class="scroll-content">
+                        <h3>Core Goals & Importance</h3>
+                        <div class="section-block">
+                            <span class="block-title">Core Goals:</span>
+                            <ul>
+                                <li><strong>Effectiveness:</strong> Does the system do what the user intends?</li>
+                                <li><strong>Efficiency:</strong> Can tasks be completed quickly with minimal effort?</li>
+                                <li><strong>Usability:</strong> Is the system easy to learn and remember?</li>
+                                <li><strong>Accessibility:</strong> Can people with different abilities use the system?</li>
+                                <li><strong>Satisfaction:</strong> Do users feel positive about using the system?</li>
+                            </ul>
+                        </div>
+                        <div class="section-block">
+                            <span class="block-title">Why HCI Matters:</span>
+                            <ul>
+                                <li>Reduces <strong>Cognitive Load</strong> (easier to understand).</li>
+                                <li>Minimizes human errors.</li>
+                                <li>Ensures technology fits human capabilities rather than forcing humans to adapt to technology.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION II -->
+        <div class="flashcard sect-ii" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-face card-front">
+                    <span class="tag">MODULE II</span>
+                    <h2>Evolution: Early Computing</h2>
+                    <p class="hint">Click to expand details</p>
+                </div>
+                <div class="card-face card-back">
+                    <div class="scroll-content">
+                        <h3>II. The Evolution (History)</h3>
+                        <div class="section-block">
+                            <span class="block-title">1. Early Era (1940s–1960s): Hardware-Centered</span>
+                            <p style="font-size:0.8rem; margin-bottom: 5px;">Focus: Machine efficiency and computational power.</p>
+                            <ul>
+                                <li><strong>Batch Processing:</strong> Tasks collected and processed all at once; no real-time feedback.</li>
+                                <li><strong>Punch Cards:</strong> Stiff paper encoding binary data via holes.</li>
+                                <li><strong>CLI:</strong> Required memorization of exact text commands.</li>
+                                <li><strong>Users:</strong> Highly trained specialists and engineers only.</li>
+                            </ul>
+                        </div>
+                        <div class="section-block">
+                            <span class="block-title">2. Birth of Interactive (1960s–1970s)</span>
+                            <ul>
+                                <li><strong>Time-Sharing:</strong> Allowed multiple users to share one computer simultaneously.</li>
+                                <li><strong>Interactive Terminals:</strong> Keyboard/screen for real-time communication.</li>
+                                <li><strong>Milestones:</strong> Sutherland’s Sketchpad (1963) and Engelbart’s Mouse and Hypertext (1968).</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flashcard sect-ii" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-face card-front">
+                    <span class="tag">MODULE II</span>
+                    <h2>Evolution: GUI to Modern</h2>
+                    <p class="hint">Click to expand details</p>
+                </div>
+                <div class="card-face card-back">
+                    <div class="scroll-content">
+                        <h3>GUI to Modern Era</h3>
+                        <div class="section-block">
+                            <span class="block-title">3. The GUI Revolution (1980s)</span>
+                            <ul>
+                                <li><strong>WIMP Model:</strong> Windows, Icons, Menus, Pointer.</li>
+                                <li><strong>Visual Metaphors:</strong> Desktop, Folders, Trash Bin.</li>
+                                <li><strong>Direct Manipulation:</strong> Dragging files directly.</li>
+                            </ul>
+                        </div>
+                        <div class="section-block">
+                            <span class="block-title">4. Usability/Mobile Era (1990s–2010s)</span>
+                            <ul>
+                                <li>Focus shifted from "interfaces" to <strong>UX (User Experience)</strong>.</li>
+                                <li><strong>Responsive Design:</strong> Adapting layouts for Mobile/Web.</li>
+                            </ul>
+                        </div>
+                        <div class="section-block">
+                            <span class="block-title">5. Modern HCI: Beyond Screens</span>
+                            <ul>
+                                <li>VUI (Voice), AR (Augmented Reality), VR (Virtual Reality), and BCI (Brain-Computer Interfaces).</li>
+                                <li><strong>Shift:</strong> Keyboard → Mouse → Touch → Voice → Neural.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION III -->
+        <div class="flashcard sect-iii" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-face card-front">
+                    <span class="tag">MODULE III</span>
+                    <h2>Usability & Shneiderman's Rules</h2>
+                    <p class="hint">Click to expand details</p>
+                </div>
+                <div class="card-face card-back">
+                    <div class="scroll-content">
+                        <h3>III. Principles & Usability</h3>
+                        <div class="section-block">
+                            <span class="block-title">Nielsen’s Five Usability Attributes:</span>
+                            <p style="font-size: 0.8rem;">Learnability, Efficiency, Memorability, Errors (recovery), and Satisfaction.</p>
+                        </div>
+                        <div class="section-block">
+                            <span class="block-title">Shneiderman’s 8 Golden Rules:</span>
+                            <ul>
+                                <li><strong>Consistency:</strong> Use similar icons/layouts.</li>
+                                <li><strong>Shortcuts:</strong> For frequent users (Ctrl+C).</li>
+                                <li><strong>Informative Feedback:</strong> System responses.</li>
+                                <li><strong>Dialog Closure:</strong> Clear beginning/end.</li>
+                                <li><strong>Prevent Errors:</strong> Disable Submit if fields empty.</li>
+                                <li><strong>Easy Reversal:</strong> Undo/Redo.</li>
+                                <li><strong>Internal Locus of Control:</strong> User feels in charge.</li>
+                                <li><strong>Reduce Memory Load:</strong> Use autocomplete.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flashcard sect-iii" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-face card-front">
+                    <span class="tag">MODULE III</span>
+                    <h2>Nielsen’s 10 Heuristics</h2>
+                    <p class="hint">Click to expand details</p>
+                </div>
+                <div class="card-face card-back">
+                    <div class="scroll-content">
+                        <h3>Nielsen’s 10 Usability Heuristics</h3>
+                        <ul>
+                            <li><strong>Visibility of System Status:</strong> Loading spinners/status.</li>
+                            <li><strong>Match Between System & Real World:</strong> Trash Bin metaphors.</li>
+                            <li><strong>User Control & Freedom:</strong> Emergency exits (Cancel/Undo).</li>
+                            <li><strong>Consistency & Standards:</strong> Don't reinvent conventions.</li>
+                            <li><strong>Error Prevention:</strong> Better than good error messages.</li>
+                            <li><strong>Recognition Rather Than Recall:</strong> Visible options/menus.</li>
+                            <li><strong>Flexibility & Efficiency:</strong> Accelerators for experts.</li>
+                            <li><strong>Aesthetic & Minimalist Design:</strong> No clutter.</li>
+                            <li><strong>Help Users with Errors:</strong> Diagnostic messages.</li>
+                            <li><strong>Help & Documentation:</strong> Focused on the task.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION IV -->
+        <div class="flashcard sect-iv" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-face card-front">
+                    <span class="tag">MODULE IV</span>
+                    <h2>Human-Centered Design (HCD)</h2>
+                    <p class="hint">Click to expand details</p>
+                </div>
+                <div class="card-face card-back">
+                    <div class="scroll-content">
+                        <h3>IV. HCD & User-Centered Process</h3>
+                        <div class="section-block">
+                            <span class="block-title">The UCD Process (Iterative):</span>
+                            <ul>
+                                <li><strong>1. Understanding Users:</strong> Identify goals and limitations.</li>
+                                <li><strong>2. Defining Requirements:</strong> Functional/accessibility needs.</li>
+                                <li><strong>3. Design Solutions:</strong> Sketches, wireframes, prototypes.</li>
+                                <li><strong>4. Evaluation:</strong> Test with real users.</li>
+                                <li><strong>5. Iteration:</strong> Improvement based on feedback.</li>
+                            </ul>
+                        </div>
+                        <div class="section-block">
+                            <span class="block-title">Essential Concepts (Don Norman):</span>
+                            <ul>
+                                <li><strong>Affordance:</strong> Actions an object allows (Button affords pressing).</li>
+                                <li><strong>Signifier:</strong> Cues on how to use it ("Push" label).</li>
+                                <li><strong>Constraint:</strong> Restricting actions to help avoid mistakes.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION V -->
+        <div class="flashcard sect-v" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-face card-front">
+                    <span class="tag">MODULE V</span>
+                    <h2>Cognitive Psych: Perception</h2>
+                    <p class="hint">Click to expand details</p>
+                </div>
+                <div class="card-face card-back">
+                    <div class="scroll-content">
+                        <h3>V. Cognitive Psychology in HCI</h3>
+                        <div class="section-block">
+                            <span class="block-title">Human Information Processing (HIP):</span>
+                            <p style="font-size:0.8rem;">Input → Perception → Cognition → Memory → Decision → Action → Feedback.</p>
+                        </div>
+                        <div class="section-block">
+                            <span class="block-title">1. Attention:</span>
+                            <p style="font-size:0.8rem;">Selective, limited, disrupted. Types: Focused, Divided, Sustained.</p>
+                        </div>
+                        <div class="section-block">
+                            <span class="block-title">2. Gestalt Principles (Perception):</span>
+                            <ul>
+                                <li><strong>Proximity:</strong> Close objects = related.</li>
+                                <li><strong>Similarity:</strong> Similar looking = grouped.</li>
+                                <li><strong>Closure:</strong> Users "fill in" missing info.</li>
+                                <li><strong>Figure-Ground:</strong> Foreground vs Background.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flashcard sect-v" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-face card-front">
+                    <span class="tag">MODULE V</span>
+                    <h2>Memory & Cognitive Load</h2>
+                    <p class="hint">Click to expand details</p>
+                </div>
+                <div class="card-face card-back">
+                    <div class="scroll-content">
+                        <h3>Memory & Decision Making</h3>
+                        <div class="section-block">
+                            <span class="block-title">3. Memory Systems:</span>
+                            <ul>
+                                <li><strong>Sensory:</strong> Milliseconds.</li>
+                                <li><strong>Short-Term/Working:</strong> ~4 chunks capacity.</li>
+                                <li><strong>Long-Term:</strong> Unlimited knowledge/skills.</li>
+                                <li><strong>HCI Rule:</strong> Recognition over Recall.</li>
+                            </ul>
+                        </div>
+                        <div class="section-block">
+                            <span class="block-title">4. Cognitive Load Theory:</span>
+                            <ul>
+                                <li><strong>Intrinsic:</strong> Task complexity.</li>
+                                <li><strong>Extraneous:</strong> Caused by poor design (clutter).</li>
+                                <li><strong>Germane:</strong> Effort put into learning.</li>
+                            </ul>
+                        </div>
+                        <div class="section-block">
+                            <span class="block-title">5. Decision & Errors:</span>
+                            <ul>
+                                <li><strong>Hick’s Law:</strong> More choices = longer decision time.</li>
+                                <li><strong>Slips:</strong> Correct goal, wrong action (accidental click).</li>
+                                <li><strong>Mistakes:</strong> Wrong goal (misunderstanding feature).</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function showTab(id) {
+            // Update buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update cards
+            const cards = document.querySelectorAll('.flashcard');
+            cards.forEach(card => {
+                if (id === 'all') {
+                    card.classList.remove('hidden');
+                } else if (card.classList.contains('sect-' + id)) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
