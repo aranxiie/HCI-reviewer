@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HCI 100-ITEM CONTINUOUS REVIEWER</title>
+    <title>HCI 100-ITEM MEGA REVIEWER</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Fredoka:wght@600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0a0a0a;
-            --panel: #141414;
-            --primary: #ff3e3e;
-            --primary-dim: #450a0a;
-            --text: #e5e5e5;
+            --bg: #0f172a;
+            --panel: #1e293b;
+            --primary: #ef4444; /* Cherry Red from your notes */
+            --primary-hover: #b91c1c;
+            --text: #f8fafc;
             --success: #22c55e;
-            --border: #262626;
+            --border: #334155;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -26,185 +26,126 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background-image: radial-gradient(var(--primary-dim) 0.5px, transparent 0.5px);
-            background-size: 30px 30px;
+            background-image: radial-gradient(var(--border) 0.5px, transparent 0.5px);
+            background-size: 20px 20px;
         }
 
         .container {
             width: 95vw;
-            max-width: 850px;
+            max-width: 900px;
             background: var(--panel);
-            border: 1px solid var(--border);
-            border-top: 5px solid var(--primary);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.7);
-            border-radius: 4px;
+            border: 2px solid var(--border);
+            border-top: 8px solid var(--primary);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            border-radius: 12px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
         }
 
-        /* Stats Header */
         header {
             padding: 20px 30px;
-            background: #000;
+            background: rgba(15, 23, 42, 0.8);
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-family: 'JetBrains Mono', monospace;
         }
 
+        .stat-group { display: flex; gap: 30px; }
         .stat-item { display: flex; flex-direction: column; }
-        .stat-label { color: var(--primary); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; }
-        .stat-value { font-weight: bold; font-size: 1.1rem; }
+        .stat-label { color: var(--primary); font-size: 0.7rem; text-transform: uppercase; font-weight: 800; }
+        .stat-value { font-family: 'JetBrains Mono', monospace; font-weight: bold; font-size: 1.2rem; }
 
-        /* Progress Bar */
-        #progress-container {
-            width: 100%;
-            height: 4px;
-            background: #1a1a1a;
-        }
-        #progress-bar {
-            height: 100%;
-            background: var(--primary);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
+        #progress-container { width: 100%; height: 6px; background: #000; }
+        #progress-bar { height: 100%; background: var(--primary); width: 0%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        /* Quiz Area */
-        .quiz-body {
-            padding: 40px;
-            min-height: 450px;
-        }
+        .quiz-body { padding: 40px; min-height: 480px; }
+        #question-meta { font-family: 'JetBrains Mono', monospace; color: #94a3b8; font-size: 0.85rem; margin-bottom: 12px; display: block; }
+        #question-text { font-size: 1.5rem; font-weight: 700; line-height: 1.4; margin-bottom: 35px; color: #fff; }
 
-        #question-meta {
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--primary);
-            font-size: 0.8rem;
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        #question-text {
-            font-size: 1.4rem;
-            font-weight: 700;
-            line-height: 1.4;
-            margin-bottom: 30px;
-            color: #fff;
-        }
-
-        .options-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        @media (max-width: 600px) {
-            .options-grid { grid-template-columns: 1fr; }
-        }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        @media (max-width: 650px) { .options-grid { grid-template-columns: 1fr; } }
 
         .option-btn {
-            background: #0d0d0d;
-            border: 1px solid var(--border);
-            color: #a3a3a3;
+            background: #334155;
+            border: 1px solid transparent;
+            color: #cbd5e1;
             padding: 20px;
             cursor: pointer;
             text-align: left;
-            font-size: 0.95rem;
-            border-radius: 4px;
-            transition: 0.2s;
+            font-size: 1rem;
+            border-radius: 8px;
+            transition: all 0.2s;
+            font-weight: 500;
         }
 
         .option-btn:hover:not(.disabled) {
+            background: #475569;
             border-color: var(--primary);
             color: #fff;
-            background: #1a1a1a;
+            transform: translateX(5px);
         }
 
-        .option-btn.correct {
-            background: var(--success) !important;
-            color: #000 !important;
-            border-color: var(--success);
-            font-weight: bold;
-        }
+        .option-btn.correct { background: var(--success) !important; color: #fff !important; font-weight: 700; }
+        .option-btn.wrong { background: var(--primary) !important; color: #fff !important; }
+        .option-btn.disabled { cursor: default; opacity: 0.7; }
 
-        .option-btn.wrong {
-            background: var(--primary) !important;
-            color: #fff !important;
-            border-color: var(--primary);
-        }
-
-        .option-btn.disabled { cursor: default; }
-
-        /* Footer Controls */
         footer {
-            padding: 20px 40px;
-            background: #0a0a0a;
+            padding: 25px 40px;
+            background: rgba(15, 23, 42, 0.9);
             border-top: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            min-height: 80px;
         }
 
-        #feedback-text {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem;
-            font-weight: bold;
-        }
+        #feedback-text { font-family: 'JetBrains Mono', monospace; font-size: 1rem; font-weight: bold; }
 
         .next-btn {
             background: var(--primary);
             color: #fff;
             border: none;
-            padding: 12px 30px;
-            font-family: 'JetBrains Mono', monospace;
-            text-transform: uppercase;
-            font-weight: bold;
-            cursor: pointer;
-            display: none;
-            border-radius: 2px;
-        }
-
-        .next-btn:hover { filter: brightness(1.2); }
-
-        #results-screen {
-            display: none;
-            text-align: center;
-            padding: 60px 40px;
-        }
-
-        .big-score {
-            font-size: 4rem;
-            color: var(--primary);
+            padding: 14px 35px;
             font-family: 'Fredoka', sans-serif;
-            margin: 20px 0;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 50px;
+            display: none;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
         }
+
+        .next-btn:hover { background: var(--primary-hover); }
+
+        #results-screen { display: none; text-align: center; padding: 60px 40px; }
+        .big-score { font-size: 5rem; color: var(--primary); font-family: 'Fredoka', sans-serif; margin: 20px 0; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header id="quiz-header">
-        <div class="stat-item">
-            <span class="stat-label">Progress</span>
-            <span id="progress-text" class="stat-value">0 / 100</span>
+        <div class="stat-group">
+            <div class="stat-item">
+                <span class="stat-label">Progress</span>
+                <span id="progress-text" class="stat-value">0/100</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Accuracy</span>
+                <span id="accuracy-text" class="stat-value">0%</span>
+            </div>
         </div>
-        <div class="stat-item">
-            <span class="stat-label">Accuracy</span>
-            <span id="accuracy-text" class="stat-value">0%</span>
-        </div>
-        <div class="stat-item">
-            <span class="stat-label">Score</span>
-            <span id="score-text" class="stat-value">0 Correct</span>
+        <div class="stat-item" style="text-align: right;">
+            <span class="stat-label">Current Score</span>
+            <span id="score-text" class="stat-value">0</span>
         </div>
     </header>
 
     <div id="progress-container"><div id="progress-bar"></div></div>
 
     <div id="quiz-area" class="quiz-body">
-        <span id="question-meta">MODULE: LOADING</span>
-        <div id="question-text">Initializing Question Database...</div>
+        <span id="question-meta">CATEGORY: LOADING</span>
+        <div id="question-text">Loading question database...</div>
         <div id="options-container" class="options-grid"></div>
     </div>
 
@@ -213,88 +154,108 @@
         <button id="next-btn" class="next-btn" onclick="nextQuestion()">Next Question →</button>
     </footer>
 
-    <!-- End Screen -->
     <div id="results-screen">
-        <h1 style="font-family: 'Fredoka', sans-serif; font-size: 2.5rem;">REVIEW COMPLETE</h1>
+        <h1 style="font-family: 'Fredoka', sans-serif; font-size: 3rem;">MISSION COMPLETE</h1>
         <div class="big-score" id="final-percent">0%</div>
-        <p id="final-stats" style="color: #888; margin-bottom: 30px;"></p>
-        <button class="next-btn" style="display: inline-block;" onclick="location.reload()">Restart Review</button>
+        <p id="final-stats" style="color: #94a3b8; font-size: 1.2rem; margin-bottom: 40px;"></p>
+        <button class="next-btn" style="display: inline-block;" onclick="location.reload()">Restart Reviewer</button>
     </div>
 </div>
 
 <script>
-const quizData = [
-    // --- HEURISTICS MOCK TEST (1-50) ---
-    { q: "A system shows a progress bar during file download.", a: "Visibility of system status", o: ["Visibility of system status", "Error prevention", "Recognition rather than recall", "Flexibility and efficiency of use"], m: "Heuristics" },
-    { q: "A website uses everyday language like “Buy Now” instead of “Execute Transaction.”", a: "Match between system and real world", o: ["Match between system and real world", "Consistency and standards", "Help and documentation", "User control and freedom"], m: "Heuristics" },
-    { q: "Users can press Ctrl + Z to undo actions.", a: "User control and freedom", o: ["Error prevention", "User control and freedom", "Recognition rather than recall", "Minimalist design"], m: "Heuristics" },
-    { q: "An app suggests previous search queries as you type.", a: "Recognition rather than recall", o: ["Flexibility and efficiency of use", "Recognition rather than recall", "Consistency and standards", "Error recovery"], m: "Heuristics" },
-    { q: "A form disables the submit button until all required fields are completed.", a: "Error prevention", o: ["Error prevention", "Visibility of system status", "Help users recover from errors", "Recognition rather than recall"], m: "Heuristics" },
-    { q: "A website uses consistent navigation menus across all pages.", a: "Consistency and standards", o: ["Match between system and real world", "Consistency and standards", "User control and freedom", "Help and documentation"], m: "Heuristics" },
-    { q: "An app provides a “Cancel” button during long processes.", a: "User control and freedom", o: ["User control and freedom", "Error prevention", "Recognition rather than recall", "Aesthetic design"], m: "Heuristics" },
-    { q: "A system displays clear error messages explaining what went wrong.", a: "Help users recognize, diagnose, and recover from errors", o: ["Error prevention", "Help users recognize, diagnose, and recover from errors", "Flexibility and efficiency of use", "Visibility of system status"], m: "Heuristics" },
-    { q: "A clean interface removes unnecessary elements.", a: "Aesthetic and minimalist design", o: ["Aesthetic and minimalist design", "Recognition rather than recall", "Error recovery", "Consistency"], m: "Heuristics" },
-    { q: "A help center provides tutorials and guides.", a: "Help and documentation", o: ["Help and documentation", "Visibility of system status", "User control", "Match with real world"], m: "Heuristics" },
-    { q: "A system highlights the current page in the navigation bar.", a: "Visibility of system status", o: ["Visibility of system status", "Recognition rather than recall", "Error prevention", "Flexibility"], m: "Heuristics" },
-    { q: "An app uses icons that resemble real-world objects (trash can, folder).", a: "Match between system and real world", o: ["Match between system and real world", "Consistency", "Minimalist design", "Error recovery"], m: "Heuristics" },
-    { q: "Users can save frequently used settings as presets.", a: "Flexibility and efficiency of use", o: ["Flexibility and efficiency of use", "Visibility of system status", "Help documentation", "Recognition"], m: "Heuristics" },
-    { q: "A form shows example formats inside input fields.", a: "Recognition rather than recall", o: ["Recognition rather than recall", "Error recovery", "Visibility", "User control"], m: "Heuristics" },
-    { q: "A system warns users before deleting important data.", a: "Error prevention", o: ["Error prevention", "User control", "Recognition", "Consistency"], m: "Heuristics" },
-    { q: "A loading spinner appears during processing.", a: "Visibility of system status", o: ["Visibility of system status", "Flexibility", "Recognition", "Help"], m: "Heuristics" },
-    { q: "Keyboard shortcuts are available for expert users.", a: "Flexibility and efficiency of use", o: ["Flexibility and efficiency of use", "Recognition", "Minimalist", "Consistency"], m: "Heuristics" },
-    { q: "A system groups related items together visually.", a: "Aesthetic and minimalist design", o: ["Aesthetic and minimalist design", "Recognition rather than recall", "Match with real world", "Error prevention"], m: "Heuristics" },
-    { q: "An app uses the same color scheme across screens.", a: "Consistency and standards", o: ["Consistency and standards", "Visibility", "Recognition", "Help"], m: "Heuristics" },
-    { q: "A system shows confirmation after completing a task.", a: "Visibility of system status", o: ["Visibility of system status", "Error recovery", "Flexibility", "Recognition"], m: "Heuristics" },
-    { q: "A search bar displays suggested results instantly.", a: "Recognition rather than recall", o: ["Recognition rather than recall", "Flexibility", "Error prevention", "Help"], m: "Heuristics" },
-    { q: "Users can easily navigate back to previous pages.", a: "User control and freedom", o: ["User control and freedom", "Visibility", "Recognition", "Minimalist"], m: "Heuristics" },
-    { q: "A system prevents invalid inputs (e.g., letters in number fields).", a: "Error prevention", o: ["Error prevention", "Recognition", "Visibility", "Help"], m: "Heuristics" },
-    { q: "A dashboard shows real-time updates.", a: "Visibility of system status", o: ["Visibility of system status", "Flexibility", "Recognition", "Consistency"], m: "Heuristics" },
-    { q: "An app uses familiar symbols like a magnifying glass for search.", a: "Match between system and real world", o: ["Match between system and real world", "Consistency", "Help", "Recognition"], m: "Heuristics" },
-    { q: "Users can drag and drop files instead of clicking menus.", a: "Flexibility and efficiency of use", o: ["Flexibility and efficiency of use", "Recognition", "Minimalist", "Visibility"], m: "Heuristics" },
-    { q: "Error messages suggest how to fix issues.", a: "Help users recognize, diagnose, and recover", o: ["Help users recognize, diagnose, and recover", "Visibility", "Recognition", "Consistency"], m: "Heuristics" },
-    { q: "A system limits unnecessary features on the screen.", a: "Aesthetic and minimalist design", o: ["Aesthetic and minimalist design", "Recognition", "Flexibility", "Help"], m: "Heuristics" },
-    { q: "Users can redo actions after undoing them.", a: "User control and freedom", o: ["User control and freedom", "Error prevention", "Recognition", "Visibility"], m: "Heuristics" },
-    { q: "A system auto-fills saved user information.", a: "Recognition rather than recall", o: ["Recognition rather than recall", "Flexibility", "Consistency", "Help"], m: "Heuristics" },
-    { q: "A progress percentage is shown during uploads.", a: "Visibility of system status", o: ["Visibility of system status", "Recognition", "Help", "Flexibility"], m: "Heuristics" },
-    { q: "A system uses clear labels instead of abbreviations.", a: "Match between system and real world", o: ["Match between system and real world", "Consistency", "Minimalist", "Recognition"], m: "Heuristics" },
-    { q: "A tooltip explains a button when hovered.", a: "Help and documentation", o: ["Help and documentation", "Visibility", "Recognition", "Flexibility"], m: "Heuristics" },
-    { q: "Users can personalize themes and layouts.", a: "Flexibility and efficiency of use", o: ["Flexibility and efficiency of use", "Recognition", "Consistency", "Error prevention"], m: "Heuristics" },
-    { q: "A warning appears before submitting incomplete forms.", a: "Error prevention", o: ["Error prevention", "Visibility", "Recognition", "Help"], m: "Heuristics" },
-    { q: "A system keeps frequently used tools visible.", a: "Recognition rather than recall", o: ["Recognition rather than recall", "Minimalist", "Help", "Consistency"], m: "Heuristics" },
-    { q: "An app uses standard icons like a gear for settings.", a: "Consistency and standards", o: ["Consistency and standards", "Recognition", "Flexibility", "Help"], m: "Heuristics" },
-    { q: "A system highlights errors in red with explanations.", a: "Help users recognize, diagnose, recover", o: ["Help users recognize, diagnose, recover", "Visibility", "Flexibility", "Recognition"], m: "Heuristics" },
-    { q: "A clean layout avoids clutter and distractions.", a: "Aesthetic and minimalist design", o: ["Aesthetic and minimalist design", "Recognition", "Flexibility", "Help"], m: "Heuristics" },
-    { q: "Users can exit a process anytime without penalty.", a: "User control and freedom", o: ["User control and freedom", "Visibility", "Recognition", "Consistency"], m: "Heuristics" },
-    { q: "A system displays step-by-step progress in a checkout process.", a: "Visibility of system status", o: ["Visibility of system status", "Flexibility", "Recognition", "Help"], m: "Heuristics" },
-    { q: "A system uses familiar workflows like “add to cart.”", a: "Match between system and real world", o: ["Match between system and real world", "Consistency", "Help", "Recognition"], m: "Heuristics" },
-    { q: "Users can quickly access recent files.", a: "Recognition rather than recall", o: ["Recognition rather than recall", "Flexibility", "Visibility", "Help"], m: "Heuristics" },
-    { q: "An app uses consistent button styles across pages.", a: "Consistency and standards", o: ["Consistency and standards", "Visibility", "Recognition", "Help"], m: "Heuristics" },
-    { q: "A system restricts incorrect password formats early.", a: "Error prevention", o: ["Error prevention", "Recognition", "Visibility", "Help"], m: "Heuristics" },
-    { q: "A system provides instant feedback after clicking a button.", a: "Visibility of system status", o: ["Visibility of system status", "Flexibility", "Recognition", "Consistency"], m: "Heuristics" },
-    { q: "Users can access FAQs when confused.", a: "Help and documentation", o: ["Help and documentation", "Visibility", "Recognition", "Flexibility"], m: "Heuristics" },
-    { q: "An interface uses simple wording and avoids jargon.", a: "Match between system and real world", o: ["Match between system and real world", "Consistency", "Recognition", "Help"], m: "Heuristics" },
-    { q: "A system allows both mouse and keyboard interaction.", a: "Flexibility and efficiency of use", o: ["Flexibility and efficiency of use", "Recognition", "Visibility", "Help"], m: "Heuristics" },
-    { q: "A system provides clear recovery steps after an error.", a: "Help users recognize, diagnose, and recover from errors", o: ["Help users recognize, diagnose, and recover from errors", "Visibility", "Recognition", "Consistency"], m: "Heuristics" },
+const rawData = [
+    // I. Introduction
+    { q: "What is the multidisciplinary field focusing on how people interact with digital systems?", a: "Human-Computer Interaction", o: ["Software Engineering", "Human-Computer Interaction", "Cognitive Science", "User Interface Design"], m: "Intro" },
+    { q: "In HCI, which component refers to the process of a person performing tasks via the system?", a: "The Interaction", o: ["The User", "The Computer", "The Interaction", "The Interface"], m: "Intro" },
+    { q: "Which HCI goal asks: 'Does the system do what the user intends?'", a: "Effectiveness", o: ["Efficiency", "Effectiveness", "Usability", "Accessibility"], m: "Intro" },
+    { q: "Which goal focuses on how quickly tasks can be completed with minimal effort?", a: "Efficiency", o: ["Effectiveness", "Efficiency", "Satisfaction", "Learnability"], m: "Intro" },
+    { q: "The goal that ensures people with different abilities can use a system is called:", a: "Accessibility", o: ["Usability", "Efficiency", "Accessibility", "Inclusion"], m: "Intro" },
+    { q: "How many components are at the core of HCI according to the notes?", a: "3", o: ["2", "3", "4", "5"], m: "Intro" },
+    { q: "HCI matters because it reduces ________ load, making systems intuitive.", a: "Cognitive", o: ["Physical", "Memory", "Cognitive", "Visual"], m: "Intro" },
+    { q: "In the HCI core components, the technology (software/hardware) is referred to as:", a: "The Computer/System", o: ["The Tool", "The Interaction", "The User", "The Computer/System"], m: "Intro" },
+    { q: "HCI is ________-centric, ensuring tech fits human capabilities.", a: "Human", o: ["System", "Machine", "Human", "Code"], m: "Intro" },
+    { q: "What refers to the pleasantness of a design from the user's perspective?", a: "Satisfaction", o: ["Effectiveness", "Learnability", "Satisfaction", "Utility"], m: "Intro" },
 
-    // --- CORE THEORY (51-100) ---
-    { q: "What era was Hardware-Centered and focused on machine efficiency?", a: "Early Computing (1940s-60s)", o: ["Early Computing (1940s-60s)", "GUI Era", "Web Era", "Modern Era"], m: "History" },
-    { q: "Who is the 'Father' of the mouse and hypertext (1968)?", a: "Douglas Engelbart", o: ["Ivan Sutherland", "Douglas Engelbart", "Don Norman", "Jakob Nielsen"], m: "History" },
-    { q: "Which Gestalt principle states that items close together are perceived as a group?", a: "Proximity", o: ["Similarity", "Proximity", "Closure", "Continuity"], m: "Cognitive" },
-    { q: "The time it takes to make a decision increases with the number of choices. This is:", a: "Hick's Law", o: ["Fitts's Law", "Hick's Law", "Nielsen's Law", "Norman's Rule"], m: "Cognitive" },
-    { q: "An accidental click despite correct intention is called a:", a: "Slip", o: ["Slip", "Mistake", "Error", "Clutter"], m: "Cognitive" },
-    { q: "What does WIMP stand for?", a: "Windows, Icons, Menus, Pointer", o: ["Windows, Internet, Mouse, Pointer", "Windows, Icons, Menus, Pointer", "Web, Interface, Mouse, Printer", "Wide, Integrated, Memory, Portal"], m: "History" }
+    // II. Evolution
+    { q: "During which era was the focus on machine efficiency and hardware?", a: "1940s–1960s", o: ["1940s–1960s", "1960s–1970s", "1980s", "Modern Era"], m: "Evolution" },
+    { q: "What are stiff paper cards encoding binary data via holes called?", a: "Punch Cards", o: ["Binary Sheets", "Punch Cards", "Data Strips", "Logic Cards"], m: "Evolution" },
+    { q: "CLI stands for:", a: "Command-Line Interface", o: ["Computer Logic Interface", "Command-Line Interface", "Control Level Interaction", "Common Link Interface"], m: "Evolution" },
+    { q: "Who developed the 'Sketchpad' in 1963?", a: "Ivan Sutherland", o: ["Douglas Engelbart", "Ivan Sutherland", "Jakob Nielsen", "Don Norman"], m: "Evolution" },
+    { q: "In which year did Douglas Engelbart demonstrate the first mouse?", a: "1968", o: ["1963", "1968", "1975", "1984"], m: "Evolution" },
+    { q: "The 1980s was characterized by the ________ Revolution.", a: "GUI", o: ["CLI", "Hardware", "GUI", "AI"], m: "Evolution" },
+    { q: "What does the 'M' in WIMP stand for?", a: "Menus", o: ["Mouse", "Memory", "Monitor", "Menus"], m: "Evolution" },
+    { q: "Dragging a file into a folder is an example of what 1980s concept?", a: "Direct Manipulation", o: ["Visual Metaphor", "Direct Manipulation", "WIMP", "Batch Processing"], m: "Evolution" },
+    { q: "Desktop, Folders, and Trash Bins are examples of:", a: "Visual Metaphors", o: ["CLI", "Neural Interfaces", "Visual Metaphors", "Direct Input"], m: "Evolution" },
+    { q: "VUI stands for:", a: "Voice User Interface", o: ["Visual Universal Interface", "Virtual User Integration", "Voice User Interface", "Vector Unit Interface"], m: "Evolution" },
+    { q: "BCI (Brain-Computer Interface) is considered part of which era?", a: "Modern", o: ["Early Computing", "GUI Era", "1970s", "Modern"], m: "Evolution" },
+    { q: "Processing tasks all at once without real-time feedback is called:", a: "Batch Processing", o: ["Time-Sharing", "Batch Processing", "Real-time processing", "Multi-tasking"], m: "Evolution" },
+    { q: "Multiple users sharing one computer simultaneously in the 60s/70s was called:", a: "Time-Sharing", o: ["Multi-processing", "Time-Sharing", "Parallel Computing", "Cloud Computing"], m: "Evolution" },
+
+    // III. Nielsen & Shneiderman
+    { q: "Which Nielsen usability attribute refers to how easy it is for first-time users?", a: "Learnability", o: ["Efficiency", "Learnability", "Satisfaction", "Memorability"], m: "Usability" },
+    { q: "Nielsen's 'Memorability' refers to:", a: "Users returning after a break and still knowing how to use it", o: ["Memorizing commands", "Users returning after a break and still knowing how to use it", "The speed of the system", "The frequency of errors"], m: "Usability" },
+    { q: "A loading spinner corresponds to which Nielsen Heuristic?", a: "Visibility of System Status", o: ["User Control", "Visibility of System Status", "Minimalist Design", "Error Prevention"], m: "Heuristics" },
+    { q: "Using a Trash Bin icon for deleting files is an example of:", a: "Match between system and real world", o: ["Consistency", "Match between system and real world", "Recognition", "Aesthetic Design"], m: "Heuristics" },
+    { q: "Providing an 'Undo' button satisfies which heuristic?", a: "User control and freedom", o: ["Error prevention", "User control and freedom", "Consistency", "Help & Documentation"], m: "Heuristics" },
+    { q: "Providing a list of 'Recent Searches' instead of making users type from memory is:", a: "Recognition rather than recall", o: ["Recognition rather than recall", "Flexibility", "Efficiency", "Consistency"], m: "Heuristics" },
+    { q: "Shneiderman's rule regarding similar icons and layouts is:", a: "Strive for Consistency", o: ["Enable Shortcuts", "Strive for Consistency", "Reduce Memory Load", "Error Prevention"], m: "Principles" },
+    { q: "Disabling the 'Submit' button until a form is filled is an example of:", a: "Error Prevention", o: ["Undo/Redo", "Error Prevention", "Feedback", "Shortcuts"], m: "Principles" },
+    { q: "Keyboard shortcuts like Ctrl+C are examples of which attribute?", a: "Efficiency", o: ["Learnability", "Satisfaction", "Efficiency", "Safety"], m: "Usability" },
+    { q: "Shneiderman's rule of 'Internal Locus of Control' means:", a: "The user feels in charge of the system", o: ["The computer controls the user", "The user feels in charge of the system", "Internal code is consistent", "Errors are handled internally"], m: "Principles" },
+    { q: "A progress bar provides which Shneiderman rule?", a: "Informative Feedback", o: ["Error Prevention", "Informative Feedback", "Shortcuts", "Closure"], m: "Principles" },
+    { q: "Designing dialogs for ________ ensures a clear end to a process.", a: "Closure", o: ["Feedback", "Consistency", "Shortcuts", "Closure"], m: "Principles" },
+
+    // IV. HCD / Donald Norman
+    { q: "HCD stands for:", a: "Human-Centered Design", o: ["Human-Centered Design", "High-Context Design", "Hardware-Centered Development", "Human-Control Device"], m: "HCD" },
+    { q: "In the UCD process, which step involves testing with real users?", a: "Evaluation", o: ["Design Solutions", "Evaluation", "Defining Requirements", "Iteration"], m: "HCD" },
+    { q: "What concept describes what an object 'allows' (e.g., a button allows pressing)?", a: "Affordance", o: ["Affordance", "Signifier", "Constraint", "Feedback"], m: "HCD" },
+    { q: "A 'Push' label on a door is an example of a:", a: "Signifier", o: ["Affordance", "Signifier", "Constraint", "Mistake"], m: "HCD" },
+    { q: "Restricting actions to prevent mistakes is known as a:", a: "Constraint", o: ["Constraint", "Affordance", "Signifier", "Error"], m: "HCD" },
+    { q: "The UCD process is ________, meaning it repeats based on feedback.", a: "Iterative", o: ["Linear", "Iterative", "Static", "Singular"], m: "HCD" },
+    { q: "In UCD, 'Identifying target users and goals' happens during:", a: "Understanding Users", o: ["Understanding Users", "Evaluation", "Iteration", "Prototyping"], m: "HCD" },
+
+    // V. Cognitive Psychology
+    { q: "HIP stands for:", a: "Human Information Processing", o: ["Human Information Processing", "High Interaction Power", "Human Internal Perception", "Heuristic Interface Process"], m: "Cognitive" },
+    { q: "Which Gestalt principle states items close together are perceived as a group?", a: "Proximity", o: ["Similarity", "Proximity", "Closure", "Continuity"], m: "Cognitive" },
+    { q: "Which Gestalt principle involves filling in missing information to see a whole?", a: "Closure", o: ["Similarity", "Proximity", "Closure", "Figure-Ground"], m: "Cognitive" },
+    { q: "Items that look similar being grouped together is the principle of:", a: "Similarity", o: ["Proximity", "Similarity", "Closure", "Figure-Ground"], m: "Cognitive" },
+    { q: "How many 'chunks' of information can Short-Term Memory typically hold?", a: "~4", o: ["~2", "~4", "~7", "~10"], m: "Cognitive" },
+    { q: "Which memory system lasts only milliseconds?", a: "Sensory", o: ["Sensory", "Short-Term", "Long-Term", "Working Memory"], m: "Cognitive" },
+    { q: "Hick's Law states that more choices lead to:", a: "Longer decision time", o: ["Higher accuracy", "Longer decision time", "Shorter decision time", "Better user experience"], m: "Cognitive" },
+    { q: "An accidental click despite having the correct intention is a:", a: "Slip", o: ["Slip", "Mistake", "Error", "Glitch"], m: "Cognitive" },
+    { q: "A wrong goal or plan based on misunderstanding features is a:", a: "Mistake", o: ["Slip", "Mistake", "Constraint", "Heuristic"], m: "Cognitive" },
+    { q: "Load caused by poor design (clutter/confusion) is:", a: "Extraneous Load", o: ["Intrinsic Load", "Extraneous Load", "Germane Load", "Sensory Load"], m: "Cognitive" },
+    { q: "Load representing the effort put into actual learning is:", a: "Germane Load", o: ["Intrinsic Load", "Extraneous Load", "Germane Load", "Cognitive Load"], m: "Cognitive" },
+    { q: "Complexity of the task itself is ________ load.", a: "Intrinsic Load", o: ["Intrinsic Load", "Extraneous Load", "Germane Load", "Task Load"], m: "Cognitive" },
+    { q: "Focusing on 'Recognition over Recall' aids which system?", a: "Memory", o: ["Vision", "Memory", "Movement", "Hearing"], m: "Cognitive" },
+    { q: "Figure-Ground principle distinguishes between:", a: "Foreground vs Background", o: ["Large vs Small", "Foreground vs Background", "Left vs Right", "Top vs Bottom"], m: "Cognitive" }
 ];
 
-// Fill the rest of Core theory to reach 100
+// Fill the database to exactly 100 items by cloning with variations
+let quizData = [...rawData];
 while(quizData.length < 100) {
-    let base = quizData[Math.floor(Math.random() * 6 + 50)];
-    quizData.push({...base, q: "[CORE REVIEW] " + base.q});
+    let randIndex = Math.floor(Math.random() * rawData.length);
+    let clone = {...rawData[randIndex]};
+    clone.q = "[Review] " + clone.q;
+    quizData.push(clone);
 }
 
+// Global Variables
 let currentIndex = 0;
 let correctCount = 0;
 let totalAnswered = 0;
 let canAnswer = true;
+
+// Shuffle everything at start
+quizData = shuffleArray(quizData);
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
 
 const qMeta = document.getElementById('question-meta');
 const qText = document.getElementById('question-text');
@@ -307,7 +268,7 @@ const accuracyText = document.getElementById('accuracy-text');
 const scoreText = document.getElementById('score-text');
 
 function loadQuestion() {
-    if (currentIndex >= quizData.length) {
+    if (currentIndex >= 100) {
         showResults();
         return;
     }
@@ -317,13 +278,15 @@ function loadQuestion() {
     feedback.innerText = '';
     
     const data = quizData[currentIndex];
-    qMeta.innerText = `MODULE: ${data.m} | ${currentIndex + 1} OF 100`;
+    qMeta.innerText = `MODULE: ${data.m.toUpperCase()} | Q-${currentIndex + 1}`;
     qText.innerText = data.q;
     
     optContainer.innerHTML = '';
-    let shuffled = [...data.o].sort(() => Math.random() - 0.5);
     
-    shuffled.forEach(opt => {
+    // Shuffle options for the specific question
+    let shuffledOptions = shuffleArray([...data.o]);
+    
+    shuffledOptions.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
         btn.innerText = opt;
@@ -345,14 +308,14 @@ function checkAnswer(selected, correct, btn) {
     if (selected === correct) {
         correctCount++;
         btn.classList.add('correct');
-        feedback.innerText = "CORRECT ✓";
+        feedback.innerText = "CORRECT";
         feedback.style.color = "var(--success)";
     } else {
         btn.classList.add('wrong');
         buttons.forEach(b => {
             if (b.innerText === correct) b.classList.add('correct');
         });
-        feedback.innerText = "INCORRECT ✗";
+        feedback.innerText = "INCORRECT";
         feedback.style.color = "var(--primary)";
     }
 
@@ -362,12 +325,12 @@ function checkAnswer(selected, correct, btn) {
 
 function updateStats() {
     const percent = totalAnswered === 0 ? 0 : Math.round((correctCount / totalAnswered) * 100);
-    const progress = (currentIndex / quizData.length) * 100;
+    const progress = (currentIndex / 100) * 100;
     
     progBar.style.width = `${progress}%`;
     progText.innerText = `${currentIndex} / 100`;
     accuracyText.innerText = `${percent}%`;
-    scoreText.innerText = `${correctCount} Correct`;
+    scoreText.innerText = correctCount;
 }
 
 function nextQuestion() {
@@ -386,9 +349,10 @@ function showResults() {
     
     const percent = Math.round((correctCount / 100) * 100);
     document.getElementById('final-percent').innerText = `${percent}%`;
-    document.getElementById('final-stats').innerText = `TOTAL CORRECT: ${correctCount} / 100 QUESTIONS`;
+    document.getElementById('final-stats').innerText = `ACCURACY: ${correctCount} OUT OF 100 QUESTIONS CORRECT`;
 }
 
+// Start
 loadQuestion();
 </script>
 
